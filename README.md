@@ -12,7 +12,7 @@ Navigate your career journey with AI-powered resume optimization.
 
 ## 🚀 Live Demo
 
-Visit the live application: [https://yourusername.github.io/resunaut/](https://yourusername.github.io/resunaut/)
+
 
 ## 🛠 Technology Stack
 
