@@ -142,30 +142,28 @@ export const PricingCard: React.FC<PricingCardProps> = ({ product, isPopular, on
         ))}
       </ul>
 
-      <button
-        onClick={handlePurchase}
-        disabled={loading}
-        className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
-          product.price === 0
-            ? 'bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700'
-            : isPopular
-            ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg shadow-blue-500/25'
-            : 'bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-gray-600'
-        } disabled:opacity-50 disabled:cursor-not-allowed`}
-      >
-        {loading ? (
-          <div className="flex items-center justify-center space-x-2">
-            <Loader className="w-4 h-4 animate-spin" />
-            <span>Processing...</span>
-          </div>
-        ) : product.price === 0 ? (
-          'Get Started Free'
-        ) : product.mode === 'subscription' ? (
-          'Start Subscription'
-        ) : (
-          'Purchase Now'
-        )}
-      </button>
+      {product.price > 0 && (
+        <button
+          onClick={handlePurchase}
+          disabled={loading}
+          className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
+            isPopular
+              ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg shadow-blue-500/25'
+              : 'bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-gray-600'
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
+        >
+          {loading ? (
+            <div className="flex items-center justify-center space-x-2">
+              <Loader className="w-4 h-4 animate-spin" />
+              <span>Processing...</span>
+            </div>
+          ) : product.mode === 'subscription' ? (
+            'Start Subscription'
+          ) : (
+            'Purchase Now'
+          )}
+        </button>
+      )}
     </div>
   );
 };
