@@ -1,12 +1,12 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import Stripe from 'stripe';
-import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
+import { createClient } from '@supabase/supabase-js';
 
 // --- Environment Variable Checks ---
-const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY');
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-const STRIPE_WEBHOOK_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
 if (!STRIPE_SECRET_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !STRIPE_WEBHOOK_SECRET) {
   throw new Error('Missing one or more required environment variables for Stripe/Supabase webhook.');
@@ -22,7 +22,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 type SpaceEvent = 'launch' | 'orbit' | 'abort';
 type PaymentType = 'subscription' | 'one-time';
 
-Deno.serve(async (req) => {
+export default async function handler(req: Request): Promise<Response> {
   try {
     // CORS Preflight
     if (req.method === 'OPTIONS') {
@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
     const event = await stripe.webhooks.constructEventAsync(
       body,
       signature,
-      STRIPE_WEBHOOK_SECRET
+      STRIPE_WEBHOOK_SECRET!
     );
 
     // Process Event
@@ -53,11 +53,11 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('🌌 Webhook Error:', error);
     return Response.json(
-      { error: 'payload-failed', message: error.message },
+      { error: 'payload-failed', message: (error as Error).message },
       { status: 500 }
     );
   }
-});
+}
 
 // --- Core Functions ---
 async function handleStripeEvent(event: Stripe.Event) {
@@ -76,7 +76,7 @@ async function handleStripeEvent(event: Stripe.Event) {
       break;
 
     case 'payment_intent.succeeded':
-      if (!(stripeData as Stripe.PaymentIntent).invoice) {
+      if (!(stripeData as Stripe.PaymentIntent)?.invoice) {
         await handleOneTimePayment(stripeData as Stripe.PaymentIntent);
       }
       break;
