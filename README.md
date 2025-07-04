@@ -14,7 +14,7 @@ Navigate your career journey with AI-powered resume optimization.
 
 
 
-## 🛠 Technology Stack
+## 🛠 Stack
 
 - **Frontend**: React 18 + TypeScript
 - **Build Tool**: Vite
@@ -188,21 +188,4 @@ resunaut/
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
 
-If you encounter any issues or have questions:
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/resunaut/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/resunaut/discussions)
-- **Email**: support@resunaut.com
-
-## 🙏 Acknowledgments
-
-- Built with [React](https://reactjs.org/) and [Vite](https://vitejs.dev/)
-- Styled with [Tailwind CSS](https://tailwindcss.com/)
-- Icons by [Lucide](https://lucide.dev/)
-- Accessibility testing with [axe-core](https://github.com/dequelabs/axe-core)
-
----
-
-**Made with ❤️ for job seekers everywhere**
