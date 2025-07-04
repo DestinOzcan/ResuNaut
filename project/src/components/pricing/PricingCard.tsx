@@ -26,50 +26,40 @@ export const PricingCard: React.FC<PricingCardProps> = ({ product, isPopular, on
   };
 
   const handlePurchase = async () => {
-    if (!user) {
-      onAuthRequired();
-      return;
-    }
-
     setLoading(true);
 
     try {
+      // Get the current session (user must be logged in)
       const { data: { session } } = await supabase.auth.getSession();
-      
       if (!session) {
-        onAuthRequired();
+        alert('You must be logged in to purchase.');
+        setLoading(false);
         return;
       }
 
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
+      const res = await fetch('https://wpjmggsotpnqcbyjkcyt.supabase.co/functions/v1/stripe-checkout', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           price_id: product.priceId,
           mode: product.mode,
-          success_url: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${window.location.origin}/pricing`,
+          success_url: window.location.origin + '/success',
+          cancel_url: window.location.origin + '/pricing',
         }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create checkout session');
-      }
-
-      const { url } = await response.json();
-      
-      if (url) {
-        window.location.href = url;
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
       } else {
-        throw new Error('No checkout URL received');
+        alert(data.error || 'Unknown error');
+        console.error('Stripe error:', data);
       }
     } catch (error) {
       console.error('Checkout error:', error);
-      // You could add a toast notification here
+      alert('Checkout failed: ' + (error instanceof Error ? error.message : String(error)));
     } finally {
       setLoading(false);
     }
